@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Divider, Card, Row, Col } from "antd";
+import { Form, Input, Button, Divider, Card, Row, Col, Table } from "antd";
 import Navbar from "../components/Navbar";
 import abis from "../abi/abis";
 import addresses from "../abi/addresses";
@@ -8,7 +8,10 @@ import useAccount from "../hooks/useAccount";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
+import metamask from '../images/meta.png'
 import CreateProduct from "./CreateProduct";
+
+const ButtonGroup = Button.Group;
 
 const layout = {
   labelCol: {
@@ -39,7 +42,78 @@ const Dashboard = () => {
 
   const [createProductButton, setCreateProductButton] = useState(false);
 
-  const accounts = window.ethereum.request({ method: "eth_requestAccounts" });
+  const columns = [
+    {
+      title: 'ID',
+      width: 100,
+      key: 'id',
+      fixed: 'left',
+      render: (item)=> <a href={'/xxx'}>{item.id}</a>
+    },
+    {
+      title: 'Name',
+      width: 100,
+      dataIndex: 'name',
+      key: 'name',
+      fixed: 'left',
+    },
+    {
+      title: 'Producer',
+      dataIndex: 'producer',
+      key: 'producer',
+      width: 150,
+    },
+    {
+      title: 'Transfer Owner',
+      key: 'transfer_owner',
+      width: 150,
+      render: (item)=> <Button onClick={()=> alert('transfer owner id: '+item.id)} style={{background:'#7aafff' , color:'white', fontWeight:'500'}}>Transfer Owner</Button>
+    },
+    {
+      title: 'Accept / Reject',
+      key: 'action',
+      fixed: 'right',
+      width: 100,
+      render: (item) => <div> 
+        {item.status.toLowerCase() === 'shipped'?<ButtonGroup>
+      <Button onClick={()=> alert('Accept'+item.id)} style={{background:'#a7db79' , color:'white', fontWeight:'500'}}>Accept</Button>
+      <Button onClick={ ()=> alert('Reject'+item.id)} style={{background:'#fa6c61' , color:'white', fontWeight:'500' }}>Reject</Button>
+    </ButtonGroup>:''}  
+        </div>,
+    },
+  ];
+  
+  const data = [];
+  for (let i = 0; i < 20; i++) {
+    if(i<5){
+      data.push({
+        id: i,
+        name: `Edrward ${i}`,
+        producer: 'test',
+        transfer_owner: `London Park no. ${i}`,
+        status:'shipped'
+      });
+    }else if(i>4 && i<9){
+      data.push({
+        id: i,
+        name: `Edrward ${i}`,
+        producer: 'test',
+        transfer_owner: `London Park no. ${i}`,
+        status:'unknown'
+      });
+    }else{
+      data.push({
+        id: i,
+        name: `Edrward ${i}`,
+        producer: 'test',
+        transfer_owner: `London Park no. ${i}`,
+        status:'shipped'
+      });
+    }
+   
+  }
+
+  const accounts = window.ethereum&&window.ethereum.request({ method: "eth_requestAccounts" });
   const { myAccount, balance } = useAccount();
   const producerContract = useContract(addresses.producer, abis.producer);
   const productContract = useContract(
@@ -103,11 +177,15 @@ const Dashboard = () => {
               </Button>
             </Form.Item>
           </Form>
-          <Button onClick={connectToMetamask} type="primary" htmlType="submit">
-            Metamsk
+          <Button style={{background:'#f0c400', color: 'white',fontWeight:'500',fontSize:'15px'}} onClick={connectToMetamask} type="warning" htmlType="submit">
+            <img width={21} height={21} src={metamask} alt={metamask}/>  {' '} Metamask
           </Button>
         </div>
-      </Card>
+        <div style={{marginTop:'20px'}}>
+        <Table columns={columns} dataSource={data} scroll={{ x: 1500, y: 1000 }} />,
+        </div>
+        </Card>
+     
     </>
   );
 };

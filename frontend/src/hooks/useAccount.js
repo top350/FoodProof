@@ -8,14 +8,14 @@ export default function useAccount() {
   const [balance, setBalance] = useState();
   const fetch = useCallback(async () => {
     if (!provider) return;
-    const accs = await provider.eth.getAccounts();
-    setAccounts(accs);
-    const acc = accs[0];
-    if (acc) {
-      setMyAccount(acc);
-      const result = await provider.eth.getBalance(acc);
-      setBalance(provider.utils.fromWei(result));
-    }
+    // const accs = await provider.eth.getAccounts();
+    // setAccounts(accs);
+    // const acc = accs[0];
+    // if (acc) {
+    //   setMyAccount(acc);
+    //   const result = await provider.eth.getBalance(acc);
+    //   setBalance(provider.utils.fromWei(result));
+    // }
   }, []);
   useEffect(() => {
     fetch();
